@@ -2798,6 +2798,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2918,6 +2939,22 @@ __webpack_require__.r(__webpack_exports__);
     this.initialize();
   },
   methods: {
+    updateRole: function updateRole(item) {
+      var _this2 = this;
+
+      var index = this.users.data.indexOf(item);
+      axios.post('auth/user/role', {
+        'role': item.role,
+        'user': item.id
+      }).then(function (response) {
+        _this2.text = response.data.user.name + "'s Role Updated to" + response.data.user.role;
+        _this2.snackbar = true;
+      })["catch"](function (error) {
+        _this2.text = error.response.data.user.name + "'s Role Updated to" + error.response.data.role;
+        _this2.users.data[index].role = error.response.data.user.role;
+        _this2.snackbar = trueconsole.dir(error.response);
+      });
+    },
     selectAll: function selectAll(ev) {
       this.selected = [];
 
@@ -2930,7 +2967,7 @@ __webpack_require__.r(__webpack_exports__);
       console.dir(this.selected);
     },
     deleteAll: function deleteAll() {
-      var _this2 = this;
+      var _this3 = this;
 
       var decided = confirm('Are you sure you want to delete these item?');
 
@@ -2939,29 +2976,29 @@ __webpack_require__.r(__webpack_exports__);
         axios.post('auth/users/delete', {
           'users': this.selected
         }).then(function (response) {
-          _this2.text = "Record Deleted Successfully";
+          _this3.text = "Record Deleted Successfully";
 
-          _this2.selected.map(function (val) {
-            var index = _this2.users.data.indexOf(val);
+          _this3.selected.map(function (val) {
+            var index = _this3.users.data.indexOf(val);
 
-            _this2.users.data.splice(index);
+            _this3.users.data.splice(index);
 
-            _this2.snackbar = true;
-            _this2.loading = false;
+            _this3.snackbar = true;
+            _this3.loading = false;
           });
         })["catch"](function (error) {
           console.log(error);
-          _this2.text = "Error Deleting Record";
-          _this2.snackbar = true;
+          _this3.text = "Error Deleting Record";
+          _this3.snackbar = true;
         });
       }
     },
     serachIt: function serachIt(val) {
-      var _this3 = this;
+      var _this4 = this;
 
       if (val.length > 2) {
         axios.get("/auth/users/".concat(val)).then(function (response) {
-          return _this3.users = response.data.users;
+          return _this4.users = response.data.users;
         })["catch"](function (error) {
           return console.log(error);
         });
@@ -2969,14 +3006,14 @@ __webpack_require__.r(__webpack_exports__);
 
       if (val.length <= 0) {
         axios.get("/auth/users/".concat(val)).then(function (response) {
-          return _this3.users = response.data.users;
+          return _this4.users = response.data.users;
         })["catch"](function (error) {
           return console.log(error);
         });
       }
     },
     paginate: function paginate(event) {
-      var _this4 = this;
+      var _this5 = this;
 
       axios.get("/auth/users?page=".concat(event.page), {
         params: {
@@ -2984,8 +3021,8 @@ __webpack_require__.r(__webpack_exports__);
         }
       }).then(function (response) {
         console.dir(event);
-        _this4.users = response.data.users;
-        _this4.roles = response.data.roles;
+        _this5.users = response.data.users;
+        _this5.roles = response.data.roles;
       })["catch"](function (error) {
         if (error.response.status == 401) {
           localStorage.removeItem('access_token');
@@ -3002,7 +3039,7 @@ __webpack_require__.r(__webpack_exports__);
       this.dialog = true;
     },
     deleteItem: function deleteItem(item) {
-      var _this5 = this;
+      var _this6 = this;
 
       var index = this.users.data.indexOf(item);
       var decided = confirm('Are you sure you want to delete this item?');
@@ -3010,54 +3047,54 @@ __webpack_require__.r(__webpack_exports__);
       if (decided) {
         this.loading = true;
         axios["delete"]("/auth/users/".concat(item.id)).then(function (response) {
-          _this5.text = "Record Deleted Successfully";
-          _this5.snackbar = true;
+          _this6.text = "Record Deleted Successfully";
+          _this6.snackbar = true;
 
-          _this5.users.data.splice(index, 1);
+          _this6.users.data.splice(index, 1);
 
-          _this5.loading = false;
+          _this6.loading = false;
         })["catch"](function (error) {
           return console.log(error);
         });
       }
     },
     close: function close() {
-      var _this6 = this;
+      var _this7 = this;
 
       this.dialog = false;
       this.$nextTick(function () {
-        _this6.editedItem = Object.assign({}, _this6.defaultItem);
-        _this6.editedIndex = -1;
+        _this7.editedItem = Object.assign({}, _this7.defaultItem);
+        _this7.editedIndex = -1;
       }, 300);
     },
     save: function save() {
-      var _this7 = this;
+      var _this8 = this;
 
       if (this.editedIndex > -1) {
         var index = this.editedIndex;
         this.loading = true;
         axios.put("/auth/users/".concat(this.editedItem.id), this.editedItem).then(function (response) {
-          _this7.text = "Record Updated Successfully";
-          _this7.snackbar = true;
-          Object.assign(_this7.users.data[index], response.data.user, _this7.loading = false);
+          _this8.text = "Record Updated Successfully";
+          _this8.snackbar = true;
+          Object.assign(_this8.users.data[index], response.data.user, _this8.loading = false);
         })["catch"](function (error) {
           console.log(error);
-          _this7.text = "Error Updating Record";
-          _this7.snackbar = true;
+          _this8.text = "Error Updating Record";
+          _this8.snackbar = true;
         });
       } else {
         this.loading = true;
         axios.post('/auth/users', this.editedItem).then(function (response) {
-          _this7.loading = false;
-          _this7.text = "Record Added Successfully";
-          _this7.snackbar = true;
+          _this8.loading = false;
+          _this8.text = "Record Added Successfully";
+          _this8.snackbar = true;
 
-          _this7.users.data.push(response.data.user); // this.close()
+          _this8.users.data.push(response.data.user); // this.close()
 
         })["catch"](function (error) {
           console.log(error);
-          _this7.text = "Error Inserting Record";
-          _this7.snackbar = true;
+          _this8.text = "Error Inserting Record";
+          _this8.snackbar = true;
         });
       }
 
@@ -24633,6 +24670,61 @@ var render = function() {
           proxy: true
         },
         {
+          key: "item.role",
+          fn: function(ref) {
+            var item = ref.item
+            return [
+              _c(
+                "v-edit-dialog",
+                {
+                  attrs: {
+                    large: "",
+                    block: "",
+                    persistent: "",
+                    "return-value": item.role
+                  },
+                  on: {
+                    "update:returnValue": function($event) {
+                      return _vm.$set(item, "role", $event)
+                    },
+                    "update:return-value": function($event) {
+                      return _vm.$set(item, "role", $event)
+                    },
+                    save: function($event) {
+                      return _vm.updateRole(item)
+                    }
+                  },
+                  scopedSlots: _vm._u(
+                    [
+                      {
+                        key: "input",
+                        fn: function() {
+                          return [
+                            _c("v-select", {
+                              attrs: { items: _vm.roles, label: "Role" },
+                              model: {
+                                value: item.role,
+                                callback: function($$v) {
+                                  _vm.$set(item, "role", $$v)
+                                },
+                                expression: "item.role"
+                              }
+                            })
+                          ]
+                        },
+                        proxy: true
+                      }
+                    ],
+                    null,
+                    true
+                  )
+                },
+                [_vm._v("\n  " + _vm._s(item.role) + "\n  ")]
+              )
+            ]
+          }
+        },
+        {
           key: "item.photo",
           fn: function(ref) {
             var item = ref.item
@@ -24666,7 +24758,7 @@ var render = function() {
                     }
                   }
                 },
-                [_vm._v("\n      mdi-pencil\n    ")]
+                [_vm._v("\n        mdi-pencil\n      ")]
               ),
               _vm._v(" "),
               _c(
@@ -24679,7 +24771,7 @@ var render = function() {
                     }
                   }
                 },
-                [_vm._v("\n      mdi-delete\n    ")]
+                [_vm._v("\n        mdi-delete\n      ")]
               )
             ]
           }
@@ -24703,6 +24795,7 @@ var render = function() {
       ])
     },
     [
+      _vm._v(" "),
       _vm._v(" "),
       _vm._v(" "),
       _vm._v(" "),
@@ -24731,7 +24824,7 @@ var render = function() {
                 }
               }
             },
-            [_vm._v("\n      Close\n    ")]
+            [_vm._v("\n        Close\n      ")]
           )
         ],
         1
@@ -101027,7 +101120,8 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__["VBtn"],VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCard"],VCardActions: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardActions"],VCardText: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardText"],VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardTitle"],VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VCol"],VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VContainer"],VDataTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_7__["VDataTable"],VDialog: vuetify_lib_components_VDialog__WEBPACK_IMPORTED_MODULE_8__["VDialog"],VDivider: vuetify_lib_components_VDivider__WEBPACK_IMPORTED_MODULE_9__["VDivider"],VForm: vuetify_lib_components_VForm__WEBPACK_IMPORTED_MODULE_10__["VForm"],VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_11__["VIcon"],VImg: vuetify_lib_components_VImg__WEBPACK_IMPORTED_MODULE_12__["VImg"],VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VRow"],VSelect: vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_13__["VSelect"],VSnackbar: vuetify_lib_components_VSnackbar__WEBPACK_IMPORTED_MODULE_14__["VSnackbar"],VSpacer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VSpacer"],VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_15__["VTextField"],VToolbar: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_16__["VToolbar"],VToolbarTitle: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_16__["VToolbarTitle"]})
+
+_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__["VBtn"],VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCard"],VCardActions: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardActions"],VCardText: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardText"],VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardTitle"],VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VCol"],VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VContainer"],VDataTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_7__["VDataTable"],VDialog: vuetify_lib_components_VDialog__WEBPACK_IMPORTED_MODULE_8__["VDialog"],VDivider: vuetify_lib_components_VDivider__WEBPACK_IMPORTED_MODULE_9__["VDivider"],VEditDialog: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_7__["VEditDialog"],VForm: vuetify_lib_components_VForm__WEBPACK_IMPORTED_MODULE_10__["VForm"],VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_11__["VIcon"],VImg: vuetify_lib_components_VImg__WEBPACK_IMPORTED_MODULE_12__["VImg"],VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VRow"],VSelect: vuetify_lib_components_VSelect__WEBPACK_IMPORTED_MODULE_13__["VSelect"],VSnackbar: vuetify_lib_components_VSnackbar__WEBPACK_IMPORTED_MODULE_14__["VSnackbar"],VSpacer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VSpacer"],VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_15__["VTextField"],VToolbar: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_16__["VToolbar"],VToolbarTitle: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_16__["VToolbarTitle"]})
 
 
 /* hot reload */

@@ -113,6 +113,27 @@
       </v-dialog>
     </v-toolbar>
   </template>
+  <template v-slot:item.role ="{ item }">
+  <v-edit-dialog
+    large 
+    block
+    persistent
+    :return-value.sync ="item.role"
+    @save = "updateRole(item)"
+  >
+  {{ item.role}}
+  <template v-slot:input>
+  <h2> Change Role</h2>
+  </template>
+<template v-slot:input>
+ <v-select
+    :items ="roles"
+    v-model="item.role"
+    label="Role"   
+  ></v-select>
+</template>
+</v-edit-dialog>
+  </template>
      <template v-slot:item.photo="{ item }">
       <v-img
           :src ="item.photo"
@@ -268,6 +289,19 @@
     },
 
   methods: {
+    updateRole(item){
+      const index = this.users.data.indexOf(item);
+      axios.post('auth/user/role', { 'role': item.role, 'user':item.id})
+      .then(response =>{
+        this.text = response.data.user.name + "'s Role Updated to" + response.data.user.role
+        this.snackbar = true
+      })
+      .catch(error =>{
+        this.text = error.response.data.user.name + "'s Role Updated to" + error.response.data.role
+        this.users.data[index].role = error.response.data.user.role
+        this.snackbar = trueconsole.dir(error.response)
+      })
+    },
     selectAll(ev){
           this.selected = [];
           if(ev.length > 0){

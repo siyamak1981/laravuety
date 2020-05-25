@@ -123,6 +123,20 @@ class UserController extends Controller
         User::whereIn('id', $request->users)->delete();
         return response()->json(['message'=>'Records Deleted Successfully'], 200);
     }
+
+    public function changeRole(Request $request)
+    {
+        $user = User::find($request->user);
+        $logedInUser = $request->user();
+        if ($user->id === $logedInUser->id) {
+            return response()->json(['user'=>new UserResource($logedInUser)], 422);
+        }
+        $role = Role::where('name', $request->role)->first();
+        $user->role()->associate($role);
+        $user->save();
+        return response()->json(['user'=>new UserResource($user)], 200);
+    }
+
     public function varifyEmail(Request $request)
     {
         $request->validate([

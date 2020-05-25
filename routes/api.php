@@ -23,6 +23,7 @@ Route::group([
         Route::post('roles/delete', 'RoleController@deleteAll');
         Route::resource('users', 'UserController');
         Route::post('users/delete', 'UserController@deleteAll');
+        Route::post('user/role', 'UserController@changeRole');
         Route::post('email/validate', 'UserController@varifyEmail');
     });
 });
