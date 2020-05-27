@@ -146,4 +146,17 @@ class UserController extends Controller
         'message', 'Valid Email'
     ], 200);
     }
+
+    public function changePhoto(Request $request)
+    {
+        $user = User::find('user', $request->user);
+        $profile = Profile::where('user_id', $request->user)->first();
+        $ext = $request->photo->extention();
+        $photo = $request->photo->storeAs('images', Str::random(20).".{$ext}", 'public');
+        $profile->photo = $photo;
+        $user->profile()->save($profile);
+        return response()->json([
+            'user' => new UserResource($user)
+        ], 200);
+    }
 }

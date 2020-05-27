@@ -25,6 +25,7 @@ Route::group([
         Route::post('users/delete', 'UserController@deleteAll');
         Route::post('user/role', 'UserController@changeRole');
         Route::post('email/validate', 'UserController@varifyEmail');
+        Route::post('user/photo', 'UserController@changePhoto');
     });
 });
 Route::group([

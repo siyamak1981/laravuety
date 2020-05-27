@@ -20,8 +20,6 @@ const store = new Vuex.Store({
         }
     },
 
-
-
     actions: {
         register(context, data) {
             return new Promise((resolve, reject) => {

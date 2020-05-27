@@ -135,6 +135,8 @@
 </v-edit-dialog>
   </template>
      <template v-slot:item.photo="{ item }">
+     <v-edit-dialog>
+      <v-avatar>
       <v-img
           :src ="item.photo"
           :lazy-src ="item.photo"
@@ -145,6 +147,13 @@
         
         >
       </v-img>
+       </v-avatar>
+      <template v-slot:input>
+        <v-file-input v-model="editedItem.photo"  accept ="image/jpg, image/png, image/bmp, image/jpeg" 
+        show-size counter  @change="uploadPhoto(item)" :rules ="[imgRules.required]" 
+         multiple placeholder="Upload Avator" label="File input" /></v-file-input>
+      </template>
+     </v-edit-dialog>
   </template>
     <template v-slot:item.actions="{ item }">
       <v-icon
@@ -168,11 +177,12 @@
     </template>
      <v-snackbar
         v-model="snackbar"
+         color="pink"
+          :timeout="0"
       >
     <div>{{ text }}</div>
         <v-btn
-          color="pink"
-          text
+         
           @click="snackbar = false"
         >
         Close
@@ -199,6 +209,9 @@
       nameRules: {
           required:v => !!v || "Name is required",
           min:v => (v && v.length <= 10) || "Name must be less than 10 characters"
+      },
+      imgRules: {
+          required: value => !!value || "File is required",
       },
 
       emailRules: {
@@ -236,6 +249,7 @@
         password:"",
         confirmationpassword:"",
         role:"",
+       photo:null,
 
       },
       defaultItem: {
@@ -289,6 +303,22 @@
     },
 
   methods: {
+    uploadPhoto(item){
+      if(this.editedItem.photo != ""){
+        const index = this.users.data.indexOf(item);
+        let formData = new FormData();
+        formData.append('photo', this.editedItem.photo)
+        formData.append('user', item.id)
+        axios.post('auth/user/photo', formData)
+        .then(response=>{
+          this.users.data[index].photo = response.data.user.photo
+          this.editedItem.photo = null
+        })
+        .catch(error =>{
+          console.log(error.response)
+        })
+      }
+    },
     updateRole(item){
       const index = this.users.data.indexOf(item);
       axios.post('auth/user/role', { 'role': item.role, 'user':item.id})
