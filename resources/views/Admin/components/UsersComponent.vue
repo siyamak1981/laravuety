@@ -2,8 +2,8 @@
 <template>
   <v-data-table
     color="error"
-    item-key="name" 
-    class="elevation-1" 
+    item-key="name"
+    class="elevation-1"
     :loading="loading"
      loading-text="Loading... Please wait"
     :headers="headers"
@@ -29,9 +29,9 @@
           inset
           vertical
         ></v-divider>
-          <v-text-field 
+          <v-text-field
             @input="serachIt"
-              class="mt-8 ml-8" 
+              class="mt-8 ml-8"
               append-icon="mdi-magnify"
               label = "Search..." />
         <v-spacer></v-spacer>
@@ -44,13 +44,14 @@
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
             </v-card-title>
-           <v-form 
+           <v-form
                 @submit.stop.prevent="save"
                 ref="form"
                 v-model="valid"
                 lazy-validation
+
               >
-  
+
             <v-card-text>
               <v-container>
                 <v-row>
@@ -62,7 +63,7 @@
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field v-model="editedItem.email" color='error'
                      autocomplete="off" :success-messages="success"
-                      :error-messages="error" label="Email" :blur="checkEmail" 
+                      :error-messages="error" label="Email" :blur="checkEmail"
                       :rules="[emailRules.required, emailRules.min]"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="12" md="12">
@@ -78,7 +79,7 @@
                     counter
                     @click:append="show = !show"
                   ></v-text-field>
-                  </v-col> 
+                  </v-col>
                   <v-col cols="12" sm="12" md="12">
                   <v-text-field
                       :rules="[passwordrules.required,  passwordMatch]"
@@ -96,7 +97,7 @@
                       :items ="roles"
                       v-model="editedItem.role"
                       label="Role"
-                      
+
                     ></v-select>
                   </v-col>
                 </v-row>
@@ -115,7 +116,7 @@
   </template>
   <template v-slot:item.role ="{ item }">
   <v-edit-dialog
-    large 
+    large
     block
     persistent
     :return-value.sync ="item.role"
@@ -129,7 +130,7 @@
  <v-select
     :items ="roles"
     v-model="item.role"
-    label="Role"   
+    label="Role"
   ></v-select>
 </template>
 </v-edit-dialog>
@@ -144,14 +145,14 @@
           class="grey lighten-2"
           max-width="100"
           max-height="100"
-        
+
         >
       </v-img>
        </v-avatar>
       <template v-slot:input>
-        <v-file-input v-model="editedItem.photo"  accept ="image/jpg, image/png, image/bmp, image/jpeg" 
-        show-size counter  @change="uploadPhoto(item)" :rules ="[imgRules.required]" 
-         multiple placeholder="Upload Avator" label="File input" /></v-file-input>
+        <v-file-input v-model="editedItem.photo"  accept ="image/*"
+        show-size counter  @change="uploadPhoto(item)"
+         multiple placeholder="Upload Avator" label="File input" name="photo" method="post" type = "file" enctype="multipart/form-data"></v-file-input>
       </template>
      </v-edit-dialog>
   </template>
@@ -171,7 +172,7 @@
         mdi-delete
       </v-icon>
     </template>
- 
+
     <template v-slot:no-data>
       <v-btn color="deep-purple accent-4" @click="initialize">Reset</v-btn>
     </template>
@@ -182,7 +183,7 @@
       >
     <div>{{ text }}</div>
         <v-btn
-         
+
           @click="snackbar = false"
         >
         Close
@@ -193,7 +194,7 @@
 
 <script>
   export default {
-    
+
     data: () => ({
       success:"",
       error:"",
@@ -211,7 +212,7 @@
           min:v => (v && v.length <= 10) || "Name must be less than 10 characters"
       },
       imgRules: {
-          required: value => !!value || "File is required",
+        //   required: value => !!value || "File is required",
       },
 
       emailRules: {
@@ -270,7 +271,7 @@
 
          if(this.editedItem.password != this.editedItem.confirmationpassword){
             return 'Password Does not matched'
-           
+
         }else {
           return true
         }
@@ -304,12 +305,13 @@
 
   methods: {
     uploadPhoto(item){
+      console.log(item);
       if(this.editedItem.photo != ""){
         const index = this.users.data.indexOf(item);
         let formData = new FormData();
-        formData.append('photo', this.editedItem.photo)
+        formData.append('photo', this.editedItem.photo[0])
         formData.append('user', item.id)
-        axios.post('auth/user/photo', formData)
+        axios.post('auth/user/photo', formData, {"Content-Type":"multipart/form-data"})
         .then(response=>{
           this.users.data[index].photo = response.data.user.photo
           this.editedItem.photo = null
@@ -340,7 +342,7 @@
           console.dir(this.selected)
     },
     deleteAll(){
-       
+
         let decided =  confirm('Are you sure you want to delete these item?')
         if(decided){
         this.loading=true
@@ -360,24 +362,24 @@
           this.snackbar = true
         }
         )
-       
+
         }
     },
     serachIt(val){
      if(val.length > 2){
         axios.get(`/auth/users/${val}`)
         .then(response => this.users = response.data.users)
-        .catch(error =>console.log(error))  
+        .catch(error =>console.log(error))
       }
-         
+
        if(val.length <= 0 ){
         axios.get(`/auth/users/${val}`)
         .then(response => this.users = response.data.users)
-        .catch(error =>console.log(error)) 
+        .catch(error =>console.log(error))
       }
-          
+
     },
-   
+
     paginate(event){
 
       axios.get(`/auth/users?page=${event.page}`, {params:{'per_page':event.itemsPerPage}})
@@ -390,11 +392,11 @@
           if(error.response.status == 401){
               localStorage.removeItem('access_token')
               window.location.href="/login"
-          
+
           }
       })
       },
-        
+
     initialize () {
         this.users = []
       },
@@ -420,7 +422,7 @@
         .catch(error =>
           console.log(error)
         )
-       
+
         }
       },
 
@@ -443,7 +445,7 @@
           Object.assign(this.users.data[index], response.data.user, this.loading=false)
 
          })
-        
+
          .catch(error =>{
            console.log(error)
             this.text = "Error Updating Record";

@@ -21,7 +21,7 @@ class User extends JsonResource
             'name' =>$this->name,
             'email' =>$this->email,
             'role' =>$this->role['name'],
-            'photo'=>asset($this->profile['photo']),
+            'photo'=>\Storage::disk('images')->url($this->profile['photo']),
             'bio' =>$this->bio,
             'created_at' =>$this->created_at->format('Y-m-d H:i:s'),
             'updated_at' =>$this->updated_at->format('Y-M-D H:i:s'),

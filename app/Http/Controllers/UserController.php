@@ -8,6 +8,7 @@ use App\Profile;
 use Illuminate\Http\Request;
 use App\http\Resources\User as UserResource;
 use App\Http\Resources\UserCollection;
+use Intervention\Image\Facades\Image;
 
 class UserController extends Controller
 {
@@ -28,13 +29,13 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->per_page;
-     
+
         return response()->json([
             'users' => new UserCollection(User::paginate($per_page)),
             'roles'=>Role::pluck('name')->all()], 200);
     }
-    
-   
+
+
     /**
      * Show the form for creating a new resource.
      *
@@ -149,12 +150,17 @@ class UserController extends Controller
 
     public function changePhoto(Request $request)
     {
-        $user = User::find('user', $request->user);
-        $profile = Profile::where('user_id', $request->user)->first();
-        $ext = $request->photo->extention();
-        $photo = $request->photo->storeAs('images', Str::random(20).".{$ext}", 'public');
-        $profile->photo = $photo;
-        $user->profile()->save($profile);
+        $user = $request->user();
+        if ($request->hasFile('photo')) {
+            $profile = $user->profile();
+            $photo =$request->file('photo');
+            $image = Image::make($photo)->resize(200, 200);
+            $path = $photo->hashName();
+            \Storage::disk('images')->put($path, $image->encode());
+            $profile->update([
+                'photo'=> $path
+            ]);
+        }
         return response()->json([
             'user' => new UserResource($user)
         ], 200);
