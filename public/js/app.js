@@ -2852,8 +2852,6 @@ __webpack_require__.r(__webpack_exports__);
           return v && v.length <= 10 || "Name must be less than 10 characters";
         }
       },
-      imgRules: {//   required: value => !!value || "File is required",
-      },
       emailRules: {
         required: function required(v) {
           return !!v || "E-mail is required";
@@ -2961,7 +2959,7 @@ __webpack_require__.r(__webpack_exports__);
       if (this.editedItem.photo != "") {
         var index = this.users.data.indexOf(item);
         var formData = new FormData();
-        formData.append('photo', this.editedItem.photo[0]);
+        formData.append('photo', this.editedItem.photo[0], this.editedItem.photo[0].name);
         formData.append('user', item.id);
         axios.post('auth/user/photo', formData, {
           "Content-Type": "multipart/form-data"
@@ -25068,7 +25066,7 @@ function normalizeComponent (
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /*!
-  * vue-router v3.3.1
+  * vue-router v3.3.2
   * (c) 2020 Evan You
   * @license MIT
   */
@@ -27132,9 +27130,6 @@ function createRouterError (from, to, type, message) {
   error.to = to;
   error.type = type;
 
-  var newStack = error.stack.split('\n');
-  newStack.splice(1, 2); // remove 2 last useless calls
-  error.stack = newStack.join('\n');
   return error
 }
 
@@ -27320,7 +27315,7 @@ History.prototype.confirmTransition = function confirmTransition (route, onCompl
     var queue = enterGuards.concat(this$1.router.resolveHooks);
     runQueue(queue, iterator, function () {
       if (this$1.pending !== route) {
-        return abort()
+        return abort(createNavigationCancelledError(current, route))
       }
       this$1.pending = null;
       onComplete(route);
@@ -28066,7 +28061,7 @@ function createHref (base, fullPath, mode) {
 }
 
 VueRouter.install = install;
-VueRouter.version = '3.3.1';
+VueRouter.version = '3.3.2';
 
 if (inBrowser && window.Vue) {
   window.Vue.use(VueRouter);
@@ -101875,8 +101870,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp\htdocs\shalishomal3\laravuety\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\shalishomal3\laravuety\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp\htdocs\laravuety\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\laravuety\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

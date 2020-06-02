@@ -211,9 +211,7 @@
           required:v => !!v || "Name is required",
           min:v => (v && v.length <= 10) || "Name must be less than 10 characters"
       },
-      imgRules: {
-        //   required: value => !!value || "File is required",
-      },
+
 
       emailRules: {
           required:v => !!v || "E-mail is required",
@@ -309,7 +307,7 @@
       if(this.editedItem.photo != ""){
         const index = this.users.data.indexOf(item);
         let formData = new FormData();
-        formData.append('photo', this.editedItem.photo[0])
+        formData.append('photo', this.editedItem.photo[0], this.editedItem.photo[0].name)
         formData.append('user', item.id)
         axios.post('auth/user/photo', formData, {"Content-Type":"multipart/form-data"})
         .then(response=>{
