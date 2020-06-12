@@ -2495,6 +2495,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2629,31 +2635,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.editedPerm = Object.assign({}, item);
       this.$store.dispatch("triggerDialog", true);
     },
-    deletePerms: function deletePerms(item) {
-      // const perms = this.$data.selected;
-      // const permIds = perms.map(perm => {
-      //     return perm.id;
-      // });
-      // const permNames = perms.map(perm => {
-      //     return perm.name;
-      // });
-      // this.$vuetifyConfirmDialog
-      //     .open(
-      //         "Confirm Delete",
-      //         "Are you sure to delete permission " + permNames + "?",
-      //         "Cancel",
-      //         "Confirm Delete"
-      //     )
-      //     .then(state => {
-      //         if (state)
-      //             this.$store.dispatch("perm/deletePerms", permIds);
-      //     });
-      var indxe = this.perms.data.indexOf(item);
-      var decided = confirm("Are you sure to delete permission ?");
-      var permId = this.editedPerm.id;
+    deletePerms: function deletePerms() {
+      var perms = this.$data.selected;
+      var permIds = perms.map(function (perm) {
+        return perm.id;
+      });
+      var permNames = perms.map(function (perm) {
+        return perm.name;
+      });
+      var decided = confirm("Are you sure to delete permission " + permNames + "?");
 
       if (decided) {
-        this.$store.dispatch("perm/deletePerms", permId);
+        this.$store.dispatch("perm/deletePerms", permIds);
       }
     },
     close: function close() {
@@ -24903,45 +24896,69 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c(
-                          "v-card-text",
+                          "v-form",
+                          {
+                            ref: "form",
+                            attrs: { "lazy-validation": "" },
+                            on: {
+                              submit: function($event) {
+                                $event.stopPropagation()
+                                $event.preventDefault()
+                                return _vm.save($event)
+                              }
+                            },
+                            model: {
+                              value: _vm.valid,
+                              callback: function($$v) {
+                                _vm.valid = $$v
+                              },
+                              expression: "valid"
+                            }
+                          },
                           [
                             _c(
-                              "v-container",
+                              "v-card-text",
                               [
                                 _c(
-                                  "v-row",
+                                  "v-container",
                                   [
                                     _c(
-                                      "v-col",
-                                      {
-                                        attrs: {
-                                          cols: "12",
-                                          sm: "12",
-                                          md: "12"
-                                        }
-                                      },
+                                      "v-row",
                                       [
-                                        _c("v-text-field", {
-                                          attrs: {
-                                            color: "error",
-                                            label: "permission name",
-                                            rules: [
-                                              _vm.namePrmission.required,
-                                              _vm.namePrmission.min
-                                            ]
+                                        _c(
+                                          "v-col",
+                                          {
+                                            attrs: {
+                                              cols: "12",
+                                              sm: "12",
+                                              md: "12"
+                                            }
                                           },
-                                          model: {
-                                            value: _vm.editedPerm.name,
-                                            callback: function($$v) {
-                                              _vm.$set(
-                                                _vm.editedPerm,
-                                                "name",
-                                                $$v
-                                              )
-                                            },
-                                            expression: "editedPerm.name"
-                                          }
-                                        })
+                                          [
+                                            _c("v-text-field", {
+                                              attrs: {
+                                                color: "error",
+                                                label: "permission name",
+                                                rules: [
+                                                  _vm.namePrmission.required,
+                                                  _vm.namePrmission.min
+                                                ]
+                                              },
+                                              model: {
+                                                value: _vm.editedPerm.name,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.editedPerm,
+                                                    "name",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression: "editedPerm.name"
+                                              }
+                                            })
+                                          ],
+                                          1
+                                        )
                                       ],
                                       1
                                     )
@@ -24950,32 +24967,32 @@ var render = function() {
                                 )
                               ],
                               1
-                            )
-                          ],
-                          1
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "v-card-actions",
-                          [
-                            _c("v-spacer"),
-                            _vm._v(" "),
-                            _c(
-                              "v-btn",
-                              {
-                                attrs: { color: "blue darken-1", text: "" },
-                                on: { click: _vm.close }
-                              },
-                              [_vm._v("Cancel")]
                             ),
                             _vm._v(" "),
                             _c(
-                              "v-btn",
-                              {
-                                attrs: { color: "blue darken-1", text: "" },
-                                on: { click: _vm.save }
-                              },
-                              [_vm._v("Save")]
+                              "v-card-actions",
+                              [
+                                _c("v-spacer"),
+                                _vm._v(" "),
+                                _c(
+                                  "v-btn",
+                                  {
+                                    attrs: { color: "blue darken-1", text: "" },
+                                    on: { click: _vm.close }
+                                  },
+                                  [_vm._v("Cancel")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "v-btn",
+                                  {
+                                    attrs: { color: "blue darken-1", text: "" },
+                                    on: { click: _vm.save }
+                                  },
+                                  [_vm._v("Save")]
+                                )
+                              ],
+                              1
                             )
                           ],
                           1
@@ -104098,29 +104115,27 @@ var actions = {
       }); // stop loading
     });
   },
-  deletePerms: function deletePerms(context, id) {
-    console.log(id);
-    context.commit("LOADING_STATUS", true, {
+  deletePerms: function deletePerms(context, permIds) {
+    context.commit('LOADING_STATUS', true, {
       root: true
     }); // start loading
 
-    axios["delete"]("auth/permissions/delete/multiple").then(function (response) {
-      console.log(response);
-      context.commit("DELETE_PERMS", response.data);
-      context.commit("LOADING_STATUS", false, {
+    axios["delete"]("auth/permissions/".concat(permIds.id), permIds.id).then(function (response) {
+      context.commit('DELETE_PERMS', response.data);
+      context.commit('LOADING_STATUS', false, {
         root: true
       }); // stop loading
 
       var payload = [{
         status: true,
-        message: "Permission(s) successfully deleted.",
+        message: 'Permission(s) successfully deleted.',
         timeout: 3000
       }];
-      context.commit("SNACKBAR_STATUS", payload, {
+      context.commit('SNACKBAR_STATUS', payload, {
         root: true
       }); // show snackbar
     })["catch"](function (error) {
-      console.log(error.response);
+      console.log("error", error);
     });
   }
 };
@@ -104693,10 +104708,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VDataTable */ "./node_modules/vuetify/lib/components/VDataTable/index.js");
 /* harmony import */ var vuetify_lib_components_VDialog__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VDialog */ "./node_modules/vuetify/lib/components/VDialog/index.js");
 /* harmony import */ var vuetify_lib_components_VDivider__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VDivider */ "./node_modules/vuetify/lib/components/VDivider/index.js");
-/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
-/* harmony import */ var vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VTextField */ "./node_modules/vuetify/lib/components/VTextField/index.js");
-/* harmony import */ var vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VToolbar */ "./node_modules/vuetify/lib/components/VToolbar/index.js");
-/* harmony import */ var vuetify_lib_components_VTooltip__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vuetify/lib/components/VTooltip */ "./node_modules/vuetify/lib/components/VTooltip/index.js");
+/* harmony import */ var vuetify_lib_components_VForm__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VForm */ "./node_modules/vuetify/lib/components/VForm/index.js");
+/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
+/* harmony import */ var vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VTextField */ "./node_modules/vuetify/lib/components/VTextField/index.js");
+/* harmony import */ var vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vuetify/lib/components/VToolbar */ "./node_modules/vuetify/lib/components/VToolbar/index.js");
+/* harmony import */ var vuetify_lib_components_VTooltip__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! vuetify/lib/components/VTooltip */ "./node_modules/vuetify/lib/components/VTooltip/index.js");
 
 
 
@@ -104734,7 +104750,8 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__["VBtn"],VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCard"],VCardActions: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardActions"],VCardText: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardText"],VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardTitle"],VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VCol"],VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VContainer"],VDataTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_7__["VDataTable"],VDialog: vuetify_lib_components_VDialog__WEBPACK_IMPORTED_MODULE_8__["VDialog"],VDivider: vuetify_lib_components_VDivider__WEBPACK_IMPORTED_MODULE_9__["VDivider"],VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_10__["VIcon"],VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VRow"],VSpacer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VSpacer"],VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_11__["VTextField"],VToolbar: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_12__["VToolbar"],VToolbarTitle: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_12__["VToolbarTitle"],VTooltip: vuetify_lib_components_VTooltip__WEBPACK_IMPORTED_MODULE_13__["VTooltip"]})
+
+_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__["VBtn"],VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCard"],VCardActions: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardActions"],VCardText: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardText"],VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardTitle"],VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VCol"],VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VContainer"],VDataTable: vuetify_lib_components_VDataTable__WEBPACK_IMPORTED_MODULE_7__["VDataTable"],VDialog: vuetify_lib_components_VDialog__WEBPACK_IMPORTED_MODULE_8__["VDialog"],VDivider: vuetify_lib_components_VDivider__WEBPACK_IMPORTED_MODULE_9__["VDivider"],VForm: vuetify_lib_components_VForm__WEBPACK_IMPORTED_MODULE_10__["VForm"],VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_11__["VIcon"],VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VRow"],VSpacer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VSpacer"],VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_12__["VTextField"],VToolbar: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_13__["VToolbar"],VToolbarTitle: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_13__["VToolbarTitle"],VTooltip: vuetify_lib_components_VTooltip__WEBPACK_IMPORTED_MODULE_14__["VTooltip"]})
 
 
 /* hot reload */

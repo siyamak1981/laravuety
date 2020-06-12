@@ -137,16 +137,12 @@ class PermissionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function delete_multiple(Request $request)
+    public function destroy(Request $request)
     {
-        $permission = Permission::where('name', $request->name)->select('id', 'name')->get();
+        $permission = Permission::where('id', $request->id)->select('id', 'name')->get();
+
         $permission->each->delete();
         return response()->json([
             'permission'=> $permission], 200);
-        // $ids = $request;
-        // $perm = Permission::whereIn('id', $ids)->select('id', 'name')->get();
-        // $response = $perm;
-        // Permission::whereIn('id', $ids)->delete();
-        // return response()->json($response, 200);
     }
 }

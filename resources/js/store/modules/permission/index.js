@@ -37,6 +37,7 @@ const mutations = {
             var index = state.perms.findIndex(perm => perm.id === payload[i].id)
             state.perms.splice(index, 1)
         }
+
     },
 
     PERM_ERROR(state, errors) {

@@ -25,13 +25,11 @@ const actions = {
                     root: true
                 }); // stop loading
 
-                let payload = [
-                    {
-                        status: true,
-                        message: "Permission successfully added.",
-                        timeout: 3000
-                    }
-                ];
+                let payload = [{
+                    status: true,
+                    message: "Permission successfully added.",
+                    timeout: 3000
+                }];
                 context.commit("SNACKBAR_STATUS", payload, {
                     root: true
                 }); // show snackbar
@@ -58,13 +56,11 @@ const actions = {
                     root: true
                 }); // stop loading
 
-                let payload = [
-                    {
-                        status: true,
-                        message: "Permission successfully updated.",
-                        timeout: 3000
-                    }
-                ];
+                let payload = [{
+                    status: true,
+                    message: "Permission successfully updated.",
+                    timeout: 3000
+                }];
                 context.commit("SNACKBAR_STATUS", payload, {
                     root: true
                 }); // show snackbar
@@ -76,33 +72,29 @@ const actions = {
                 }); // stop loading
             });
     },
-    deletePerms(context, id) {
-        console.log(id);
-        context.commit("LOADING_STATUS", true, {
-            root: true
-        }); // start loading
-        axios
-            .delete(`auth/permissions/delete/multiple`)
-            .then(response => {
-                console.log(response);
-                context.commit("DELETE_PERMS", response.data);
-                context.commit("LOADING_STATUS", false, {
-                    root: true
-                }); // stop loading
+    deletePerms(context, permIds) {
 
-                let payload = [
-                    {
-                        status: true,
-                        message: "Permission(s) successfully deleted.",
-                        timeout: 3000
-                    }
-                ];
-                context.commit("SNACKBAR_STATUS", payload, {
+        context.commit('LOADING_STATUS', true, {
+            root: true
+        }) // start loading
+        axios.delete(`auth/permissions/${permIds.id}`, permIds.id)
+            .then(response => {
+                context.commit('DELETE_PERMS', response.data)
+                context.commit('LOADING_STATUS', false, {
                     root: true
-                }); // show snackbar
+                }) // stop loading
+
+                let payload = [{
+                    status: true,
+                    message: 'Permission(s) successfully deleted.',
+                    timeout: 3000
+                }, ]
+                context.commit('SNACKBAR_STATUS', payload, {
+                    root: true
+                }) // show snackbar
             })
             .catch(error => {
-                console.log(error.response);
+                console.log("error", error);
             });
     }
 };

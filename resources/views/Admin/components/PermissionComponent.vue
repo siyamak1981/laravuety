@@ -39,34 +39,40 @@
                         <v-card-title>
                             <span class="headline">{{ formTitle }}</span>
                         </v-card-title>
+                        <v-form
+                            @submit.stop.prevent="save"
+                            ref="form"
+                            v-model="valid"
+                            lazy-validation
+                        >
+                            <v-card-text>
+                                <v-container>
+                                    <v-row>
+                                        <v-col cols="12" sm="12" md="12">
+                                            <v-text-field
+                                                v-model="editedPerm.name"
+                                                color="error"
+                                                label="permission name"
+                                                :rules="[
+                                                    namePrmission.required,
+                                                    namePrmission.min
+                                                ]"
+                                            ></v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card-text>
 
-                        <v-card-text>
-                            <v-container>
-                                <v-row>
-                                    <v-col cols="12" sm="12" md="12">
-                                        <v-text-field
-                                            v-model="editedPerm.name"
-                                            color="error"
-                                            label="permission name"
-                                            :rules="[
-                                                namePrmission.required,
-                                                namePrmission.min
-                                            ]"
-                                        ></v-text-field>
-                                    </v-col>
-                                </v-row>
-                            </v-container>
-                        </v-card-text>
-
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" text @click="close"
-                                >Cancel</v-btn
-                            >
-                            <v-btn color="blue darken-1" text @click="save"
-                                >Save</v-btn
-                            >
-                        </v-card-actions>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="close"
+                                    >Cancel</v-btn
+                                >
+                                <v-btn color="blue darken-1" text @click="save"
+                                    >Save</v-btn
+                                >
+                            </v-card-actions>
+                        </v-form>
                     </v-card>
                 </v-dialog>
                 <v-tooltip bottom>
@@ -286,31 +292,19 @@ export default {
             this.$store.dispatch("triggerDialog", true);
         },
 
-        deletePerms(item) {
-            // const perms = this.$data.selected;
-            // const permIds = perms.map(perm => {
-            //     return perm.id;
-            // });
-            // const permNames = perms.map(perm => {
-            //     return perm.name;
-            // });
-            // this.$vuetifyConfirmDialog
-            //     .open(
-            //         "Confirm Delete",
-            //         "Are you sure to delete permission " + permNames + "?",
-            //         "Cancel",
-            //         "Confirm Delete"
-            //     )
-            //     .then(state => {
-            //         if (state)
-            //             this.$store.dispatch("perm/deletePerms", permIds);
-            //     });
-
-            const indxe = this.perms.data.indexOf(item);
-            let decided = confirm("Are you sure to delete permission ?");
-            const permId = this.editedPerm.id;
+        deletePerms() {
+            const perms = this.$data.selected;
+            const permIds = perms.map(perm => {
+                return perm.id;
+            });
+            const permNames = perms.map(perm => {
+                return perm.name;
+            });
+            let decided = confirm(
+                "Are you sure to delete permission " + permNames + "?"
+            );
             if (decided) {
-                this.$store.dispatch("perm/deletePerms", permId);
+                this.$store.dispatch("perm/deletePerms", permIds);
             }
         },
 
