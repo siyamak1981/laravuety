@@ -26,6 +26,11 @@ Route::group([
         Route::post('user/role', 'UserController@changeRole');
         Route::post('email/validate', 'UserController@varifyEmail');
         Route::post('user/photo', 'UserController@changePhoto');
+        // Route::resource('permissions', 'PermissionController');
+        Route::get('permissions', 'PermissionController@index')->name('permissions');
+        Route::post('permissions', 'PermissionController@store')->name('permission.store');
+        Route::put('permissions/update', 'PermissionController@update')->name('permission.update');
+        Route::delete('permissions/delete/multiple', 'PermissionController@delete_multiple')->name('permissions.destroy');
     });
 });
 Route::group([

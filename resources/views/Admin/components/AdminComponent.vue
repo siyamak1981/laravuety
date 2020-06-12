@@ -41,12 +41,12 @@
           class="mt-4"
           link
         >
-       
-          <v-list-item-title class="grey--text text--darken-1">     
+
+          <v-list-item-title class="grey--text text--darken-1">
            <v-switch class="ma-4" v-model ="theme" label="Theme">
            </v-switch>
            </v-list-item-title>
-           
+
         </v-list-item>
         <v-list-item link @click="logout">
           <v-list-item-action>
@@ -61,10 +61,10 @@
       app
       clipped-left
       color="deep-purple accent-4"
-      
+
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-    
+
       <v-toolbar-title class="mr-12 align-center">
         <span class="title">Dashboard</span>
       </v-toolbar-title>
@@ -102,11 +102,13 @@
       >
         <v-col>
           <v-snackbar
-              v-model="snackbar"
+                v-model="snackbar"
+                top
+                right
+                color="pink"
             >
                 You Are LoggedIn Sueccessfully
                 <v-btn
-                  color="pink"
                   text
                   @click="snackbar"
                 >
@@ -135,6 +137,7 @@
         { icon: 'mdi-history', text: 'Tag', action:'#' },
         { icon: 'mdi-playlist-play', text: 'Roles', action:"/admin/roles" },
         { icon: 'mdi-account-heart', text: 'Users', action:'/admin/users' },
+        { icon: 'mdi-castle', text: 'Permissions', action:'/admin/permissions' },
       ],
       items2: [
         { picture: 28, text: 'Joseph' },
@@ -160,7 +163,7 @@
             this.$router.push("/login")
                 this.snackbar = true;
                 this.text = "You are LoggedOut Successfully";
-                
+
             })
             .catch(error =>{
               console.log(error)
@@ -169,4 +172,3 @@
   }
   }
 </script>
-    

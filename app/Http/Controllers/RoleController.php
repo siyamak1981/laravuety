@@ -1,9 +1,11 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Role;
 use Illuminate\Http\Request;
+
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+use Validator;
 
 class RoleController extends Controller
 {
@@ -24,6 +26,10 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->per_page;
+        $roles = Role::select('id', 'name')
+        ->with('permissions')
+        ->get();
+
         return response()->json(['roles' => Role::paginate($per_page)], 200);
     }
 
@@ -45,11 +51,46 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $role = new Role([
-            'name' => $request->name,
-            ]);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:roles,name',
+            'permissions' => 'required',
+          ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->getMessages();
+            $obj = $validator->failed();
+            $result = [];
+            foreach ($obj as $input => $rules) {
+                $i = 0;
+                foreach ($rules as $rule => $ruleInfo) {
+                    $key = $rule;
+                    $key = $input.'|'.strtolower($key);
+                    $result[$key] = $errors[$input][$i];
+                    $i++;
+                }
+            }
+            return response()->json($result, 422);
+        }
+
+        $role = new Role;
+        $role->name = $request->name;
+        $role->guard_name = 'api';
         $role->save();
-        return response()->json(['role'=> $role], 200);
+
+        //Looping thru selected permissions
+        foreach ($request->permissions as $permission) {
+            $permission = Permission::where('id', '=', $permission)->firstOrFail();
+            //Fetch the newly created role and assign permission
+            $role = Role::find($role->id);
+            $role->givePermissionTo($permission);
+        }
+
+        $role = Role::select('id', 'name')
+                  ->with('permissions')
+                  ->where('id', $role->id)
+                  ->first();
+
+        return response()->json($role, 200);
     }
 
     /**

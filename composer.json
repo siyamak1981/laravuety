@@ -17,7 +17,8 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.0",
         "laravolt/avatar": "^3.2",
-        "nesbot/carbon": "^2.33"
+        "nesbot/carbon": "^2.33",
+        "spatie/laravel-permission": "^3.13"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

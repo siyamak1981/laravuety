@@ -19,7 +19,7 @@ class AuthController extends Controller
     {
         // $this->middleware('auth:api', ['except' => ['logout','login']]);
     }
-    
+
     /**
      * Create user
      *
@@ -35,7 +35,7 @@ class AuthController extends Controller
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string'
-            
+
         ]);
         $user = new User([
             'first' => $request->first,
@@ -45,7 +45,7 @@ class AuthController extends Controller
             'password' => bcrypt($request->password),
             'activation_token' => Str::random(60),
             'bio'    => $request->bio,
-            // 'photo'    => $request->photo,
+            'photo'    => $request->photo,
         ]);
         $user->save();
         $user->notify(new SignupActivate($user));
@@ -53,7 +53,7 @@ class AuthController extends Controller
             'message' => 'Successfully created user!'
         ], 201);
     }
-  
+
     /**
      * Login user and create token
      *
@@ -80,16 +80,16 @@ class AuthController extends Controller
             ], 401);
         }
         $user = $request->user();
-   
+
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
         if ($request->remember_me) {
             $token->expires_at = Carbon::now()->addWeeks(1);
         }
         $token->save();
-    
+
         return response()->json([
-            
+
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
             'expires_at' => Carbon::parse(
@@ -97,7 +97,7 @@ class AuthController extends Controller
             )->toDateTimeString()
         ]);
     }
-  
+
     public function varify(Request $request)
     {
         return $request->user()->only('name', 'email');
@@ -129,7 +129,7 @@ class AuthController extends Controller
             'message' => 'Successfully logged out'
         ]);
     }
-  
+
     /**
      * Get the authenticated User
      *

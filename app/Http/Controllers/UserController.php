@@ -28,10 +28,11 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->per_page;
-
+        $per_page = $request->per_page ? $request->per_page : 5;
+        $sortBy=$request->sort_by;
+        $orderBy=$request->order_by;
         return response()->json([
-            'users' => new UserCollection(User::paginate($per_page)),
+            'users' => new UserCollection(User::orderBy($sortBy, $orderBy)->paginate($per_page)),
             'roles'=>Role::pluck('name')->all()], 200);
     }
 

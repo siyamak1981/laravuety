@@ -1,13 +1,27 @@
 import Vue from 'vue';
 import Vuex from "vuex";
 import axios from 'axios'
+import permission from './modules/permission/index'
+import role from './modules/role/index'
 Vue.use(Vuex);
 
 
 const store = new Vuex.Store({
+    modules: {
+        role: role,
+        perm: permission,
+
+    },
+
     state: {
         token: localStorage.getItem("access_token") || null,
         user: {},
+        drawer: true,
+        loading: true,
+        dialog: false,
+        snackbar: false,
+        snackbarText: '',
+        snackbarTimeout: 0,
 
     },
 
@@ -17,10 +31,34 @@ const store = new Vuex.Store({
         },
         destroyToken(state) {
             state.token = null
-        }
+        },
+        DRAWER_STATUS(state, status) {
+            state.drawer = status
+        },
+        LOADING_STATUS(state, loading) {
+            state.loading = loading
+        },
+        DIALOG_STATUS(state, dialog) {
+            state.dialog = dialog
+        },
+        SNACKBAR_STATUS(state, payload) {
+            state.loading = false; // set loading to false
+
+            state.snackbar = payload[0].status
+            state.snackbarText = payload[0].message
+            state.snackbarTimeout = payload[0].timeout
+
+            // change snackbar state afer timeout
+            setTimeout(function () {
+                state.snackbar = false
+            }, payload[0].timeout);
+        },
     },
 
     actions: {
+        triggerDialog(context, dialog) {
+            context.commit('DIALOG_STATUS', dialog)
+        },
         register(context, data) {
             return new Promise((resolve, reject) => {
                 axios.post("/auth/signup/", {

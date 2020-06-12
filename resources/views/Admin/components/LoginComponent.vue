@@ -21,7 +21,7 @@
                 flat
               >
                 <v-toolbar-title>Login form</v-toolbar-title>
-                
+
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-btn
@@ -33,8 +33,8 @@
                     >
                       <v-icon>mdi-account-heart</v-icon>
                     </v-btn>
-                    
-                    
+
+
                   </template>
                   <span>Source</span>
                 </v-tooltip>
@@ -53,7 +53,7 @@
                 lazy-validation
               >
                   <v-text-field
-                 
+
                     label="Email"
                     v-model="email"
                     :rules = "emailRules"
@@ -64,7 +64,7 @@
                   ></v-text-field>
 
                   <v-text-field
-            
+
                     v-model="password"
                     label="Password"
                     name="password"
@@ -77,18 +77,20 @@
                     counter
                     @click:append="show = !show"
                   ></v-text-field>
-              
+
                 <v-btn block dark :disabled="!valid" color="deep-purple accent-4" class="mt-4" type="submit">Login</v-btn>
                 </v-form>
               </v-card-text>
             </v-card>
               <v-snackbar
-                  v-model="snackbar"
+                v-model="snackbar"
+                top
+                right
+                color="pink"
                 >
-                  {{ text }}
+           You Are Registered Sueccessfully
                   <v-btn
-                   
-                    color="pink"
+
                     text
                     @click="snackbar = false"
                   >
@@ -108,7 +110,7 @@
       source: String,
     },
     data(){
-        return{ 
+        return{
         show: false,
         valid:true,
         email:'',
@@ -124,16 +126,17 @@
         loading:false,
         snackbar:false,
         text:'',
- 
+
         }
     },
+
       created () {
-      this.$vuetify.theme.dark = true
+        this.$vuetify.theme.dark = true
+        this.snackbar = true
     },
     methods:{
           login() {
             this.loading=true
-            
               this.$store
                   .dispatch("retrieveToken", {
                       email: this.email,
@@ -147,9 +150,10 @@
                       this.text = error.response.data.message
                       this.snackbar = true
                   })
-          
+
           }
 
   }
   }
 </script>
+
