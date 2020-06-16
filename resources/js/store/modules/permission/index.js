@@ -23,6 +23,7 @@ const mutations = {
         state.perms.unshift(perm)
     },
 
+
     UPDATE_PERM(state, payload) {
         state.perms = state.perms.map(perm => {
             if (perm.id === payload.id) {

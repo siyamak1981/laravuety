@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-container grid-list-md text-xs-center>
-            <v-layout v-resize="onResize" row wrap>
+            <v-layout row wrap>
                 <v-flex xs12>
                     <v-toolbar flat color="dark">
                         <v-toolbar-title>Roles</v-toolbar-title>
@@ -79,6 +79,11 @@
                         </v-tooltip>
                     </v-toolbar>
 
+                    <template v-slot:no-data>
+                        <v-btn color="deep-purple accent-4" @click="initialize"
+                            >Reset</v-btn
+                        >
+                    </template>
                     <v-card flat>
                         <v-data-table
                             color="error"
@@ -143,28 +148,33 @@
                                                 v-on="on"
                                                 @click="editRole(props.item)"
                                             >
-                                                edit
+                                                mdi-pencil
                                             </v-icon>
                                         </template>
                                         <span>Edit</span>
                                     </v-tooltip>
-
-                                    <v-tooltip bottom>
-                                        <template v-slot:activator="{ on }">
-                                            <v-icon
-                                                small
-                                                class="mr-2"
-                                                v-on="on"
-                                                @click="editRole(props.item)"
-                                            >
-                                                file_copy
-                                            </v-icon>
-                                        </template>
-                                        <span>Duplicate</span>
-                                    </v-tooltip>
                                 </td>
                             </template>
-                        </v-data-table>
+                            <template v-slot:item.actions="{ item }">
+                                <v-icon
+                                    small
+                                    class="mr-2"
+                                    @click="editRole(item)"
+                                >
+                                    mdi-pencil
+                                </v-icon>
+                                <v-icon small @click="deleteRoles(item)">
+                                    mdi-delete
+                                </v-icon>
+                            </template>
+                            <template v-slot:no-data>
+                                <v-btn
+                                    color="deep-purple accent-4"
+                                    @click="initialize"
+                                    >Reset</v-btn
+                                >
+                            </template></v-data-table
+                        >
                     </v-card>
                 </v-flex>
             </v-layout>
@@ -265,19 +275,19 @@ export default {
         return {
             search: "",
             selected: [],
+
             headers: [
                 {
                     text: "Select",
                     align: "left",
-                    value: "select-all"
+                    value: "select-all",
+                    sortable: false
                 },
                 { text: "Name", align: "left", value: "name" },
                 { text: "Permissions", align: "left", value: "permissions" },
-                {
-                    text: "Actions",
-                    align: "center",
-                    value: "name"
-                }
+                { text: "Created", value: "created_at" },
+                { text: "Updated", value: "updated_at" },
+                { text: "Actions", value: "actions" }
             ],
 
             editedIndex: -1,
@@ -323,11 +333,15 @@ export default {
     },
 
     created() {
+        this.initialize();
         this.$store.dispatch("role/fetchRoles");
         this.$store.dispatch("perm/fetchPerms");
     },
 
     methods: {
+        initialize() {
+            this.role = [];
+        },
         selectAll(ev) {
             this.selected = [];
             if (ev.length > 0) {
@@ -355,11 +369,6 @@ export default {
             this.$store.dispatch("perm/fetchPerms");
         },
 
-        onResize() {
-            if (window.innerWidth < 769) this.$store.dispatch("isMobile", true);
-            else this.$store.dispatch("isMobile", false);
-        },
-
         openDialog() {
             this.editedIndex = -1; // reset default: important
             this.editedRole = Object.assign({}, this.defaultRole); // reset to default
@@ -367,7 +376,7 @@ export default {
         },
 
         editRole(role) {
-            this.editedIndex = this.roles.indexOf(role); // get index: important
+            this.editedIndex = this.roles.data.indexOf(role); // get index: important
             this.editedRole = Object.assign({}, role);
             this.$store.dispatch("triggerDialog", true);
         },
@@ -381,17 +390,10 @@ export default {
                 return role.name;
             });
 
-            this.$vuetifyConfirmDialog
-                .open(
-                    "Confirm Delete",
-                    "Are you sure to delete role " + roleNames + "?",
-                    "Cancel",
-                    "Confirm Delete"
-                )
-                .then(state => {
-                    if (state)
-                        this.$store.dispatch("role/deleteRoles", roleIds);
-                });
+            let decided = confirm("Are you sure to delete permission ?");
+            if (decided) {
+                this.$store.dispatch("role/deleteRoles", roleIds);
+            }
         },
 
         close() {

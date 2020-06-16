@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import AdminComponent from "../views/Admin/components/AdminComponent.vue"
 import Roles from "../views/Admin/components/roles/Roles.vue"
-import PermissionComponent from "../views/Admin/components/PermissionComponent.vue"
+import PermissionComponent from "../views/Admin/components/permissions/PermissionComponent.vue"
 import UsersComponent from "../views/Admin/components/UsersComponent.vue"
 import Contact from "../views/Admin/components/Contact.vue"
 import LoginComponent from "../views/Admin/components/LoginComponent.vue"

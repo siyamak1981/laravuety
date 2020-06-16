@@ -7,6 +7,7 @@
         loading-text="Loading... Please wait"
         :headers="headers"
         :items="perms.data"
+        :options.sync="options"
         :server-items-length="perms.total"
         @pagination="paginate"
         :items-per-page="5"
@@ -39,42 +40,47 @@
                         <v-card-title>
                             <span class="headline">{{ formTitle }}</span>
                         </v-card-title>
-                        <v-form
-                            @submit.stop.prevent="save"
-                            ref="form"
-                            v-model="valid"
-                            lazy-validation
-                        >
-                            <v-card-text>
-                                <v-container>
-                                    <v-row>
-                                        <v-col cols="12" sm="12" md="12">
-                                            <v-text-field
-                                                v-model="editedPerm.name"
-                                                color="error"
-                                                label="permission name"
-                                                :rules="[
-                                                    namePrmission.required,
-                                                    namePrmission.min
-                                                ]"
-                                            ></v-text-field>
-                                        </v-col>
-                                    </v-row>
-                                </v-container>
-                            </v-card-text>
+                        <v-progress-linear
+                            v-if="loadingStatus"
+                            :indeterminate="loadingStatus"
+                            height="2"
+                        ></v-progress-linear>
 
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="blue darken-1" text @click="close"
-                                    >Cancel</v-btn
-                                >
-                                <v-btn color="blue darken-1" text @click="save"
-                                    >Save</v-btn
-                                >
-                            </v-card-actions>
-                        </v-form>
+                        <v-card-text>
+                            <v-container>
+                                <v-row>
+                                    <v-col cols="12" sm="12" md="12">
+                                        <v-text-field
+                                            v-model="editedPerm.name"
+                                            color="error"
+                                            :disabled="loadingStatus"
+                                            label="permission name"
+                                            :rules="[
+                                                namePrmission.required,
+                                                namePrmission.min
+                                            ]"
+                                        ></v-text-field>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </v-card-text>
+
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue darken-1" text @click="close"
+                                >Cancel</v-btn
+                            >
+                            <v-btn
+                                color="blue darken-1"
+                                text
+                                :loading="loadingStatus"
+                                @click="save"
+                                >Save</v-btn
+                            >
+                        </v-card-actions>
                     </v-card>
                 </v-dialog>
+
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
                         <v-btn
@@ -98,8 +104,8 @@
                             text
                             small
                             icon
-                            v-on="on"
                             @click="deletePerms"
+                            v-on="on"
                             ><v-icon>mdi-delete</v-icon></v-btn
                         >
                     </template>
@@ -184,6 +190,10 @@ export default {
                 { text: "Updated", value: "updated_at" },
                 { text: "Actions", value: "actions" }
             ],
+            options: {
+                sortBy: ["name"],
+                sortDesc: [true]
+            },
             editedIndex: -1,
             editedPerm: {
                 id: "",
@@ -221,7 +231,6 @@ export default {
             val || this.close();
         }
     },
-
     created() {
         this.initialize();
         this.$store.dispatch("perm/fetchPerms");
@@ -264,10 +273,23 @@ export default {
             }
             console.dir(this.selected);
         },
+
         paginate(event) {
+            const sortBy =
+                this.options.sortBy.length == 0
+                    ? "name"
+                    : this.options.sortBy[0];
+            const orderBy =
+                this.options.sortDesc.length > 0 && this.options.sortDesc[0]
+                    ? "asc"
+                    : "desc";
             axios
                 .get(`/auth/permissions?page=${event.page}`, {
-                    params: { per_page: event.itemsPerPage }
+                    params: {
+                        per_page: event.itemsPerPage,
+                        sort_by: sortBy,
+                        order_by: orderBy
+                    }
                 })
                 .then(response => {
                     this.permissions = response.data.permissions;
@@ -279,7 +301,6 @@ export default {
                     }
                 });
         },
-
         openDialog() {
             this.editedIndex = -1; // reset default: important
             this.editedPerm = Object.assign({}, this.defaultPerm); // reset to default
@@ -292,17 +313,10 @@ export default {
             this.$store.dispatch("triggerDialog", true);
         },
 
-        deletePerms() {
-            const perms = this.$data.selected;
-            const permIds = perms.map(perm => {
-                return perm.id;
-            });
-            const permNames = perms.map(perm => {
-                return perm.name;
-            });
-            let decided = confirm(
-                "Are you sure to delete permission " + permNames + "?"
-            );
+        deletePerms(permIds) {
+            const index = this.perms.data.indexOf(permIds);
+            console.log("index:", index);
+            let decided = confirm("Are you sure you want to delete this item?");
             if (decided) {
                 this.$store.dispatch("perm/deletePerms", permIds);
             }

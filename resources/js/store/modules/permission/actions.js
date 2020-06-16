@@ -64,9 +64,10 @@ const actions = {
                 context.commit("SNACKBAR_STATUS", payload, {
                     root: true
                 }); // show snackbar
+
             })
             .catch(error => {
-                context.commit("PERM_ERROR", error.response.data); // get error from backend
+                context.commit("PERM_ERROR", error.response); // get error from backend
                 context.commit("LOADING_STATUS", false, {
                     root: true
                 }); // stop loading
@@ -77,7 +78,11 @@ const actions = {
         context.commit('LOADING_STATUS', true, {
             root: true
         }) // start loading
-        axios.delete(`auth/permissions/${permIds.id}`, permIds.id)
+        axios.delete(`/auth/permissions/${permIds.id}`, {
+                id: permIds.id
+
+
+            })
             .then(response => {
                 context.commit('DELETE_PERMS', response.data)
                 context.commit('LOADING_STATUS', false, {

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use App\Http\Resources\UserCollection;
 use Validator;
 
 class PermissionController extends Controller
@@ -16,10 +16,16 @@ class PermissionController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->per_page;
-        $permissions = Permission::all();
+        $per_page = $request->per_page ? $request->per_page : 5;
+        $sortBy=$request->sort_by;
+        $orderBy=$request->order_by;
 
-        return response()->json(['permissions' => Permission::paginate($per_page)], 200);
+        // $permissions = Permission::all();
+
+        return response()->json([
+            'permissions' => Permission::paginate($per_page)
+            // 'permissions' => new UserCollection(Permission::orderBy($sortBy, $orderBy)->paginate($per_page)),
+        ], 200);
     }
 
     /**
@@ -137,12 +143,10 @@ class PermissionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy($id)
     {
-        $permission = Permission::where('id', $request->id)->select('id', 'name')->get();
-
-        $permission->each->delete();
-        return response()->json([
-            'permission'=> $permission], 200);
+        $permission =Permission::find($id);
+        $permission->delete();
+        return response()->json(['message'=>'Records Deleted Successfully'], 200);
     }
 }

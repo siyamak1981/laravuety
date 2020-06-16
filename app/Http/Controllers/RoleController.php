@@ -123,12 +123,52 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $req)
     {
-        $role = Role::find($id);
-        $role->name = $request->name;
-        $role->save();
-        return response()->json(['role'=>$role], 200);
+        $validator = Validator::make($req->all(), [
+          'name' => 'required|unique:roles,name,'.$req->id,
+          'permissions' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->getMessages();
+            $obj = $validator->failed();
+            $result = [];
+            foreach ($obj as $input => $rules) {
+                $i = 0;
+                foreach ($rules as $rule => $ruleInfo) {
+                    $key = $rule;
+                    $key = $input.'|'.strtolower($key);
+                    $result[$key] = $errors[$input][$i];
+                    $i++;
+                }
+            }
+            return response()->json($result, 422);
+        }
+
+
+        $role = Role::select('id', 'name')->where('id', $req->id)->first();
+        $role->name = $req->name;
+        $role->guard_name = 'api';
+        $role->update();
+
+        $p_all = Permission::all();//Get all permissions
+
+        foreach ($p_all as $p) {
+            $role->revokePermissionTo($p); //Remove all permissions associated with role
+        }
+
+        foreach ($req->permissions as $permission) {
+            $p = Permission::where('id', '=', $permission)->firstOrFail(); //Get corresponding form //permission in db
+          $role->givePermissionTo($p);  //Assign permission to role
+        }
+
+        $role = Role::select('id', 'name')
+                ->with('permissions')
+                ->where('id', $role->id)
+                ->first();
+
+        return response()->json($role, 200);
     }
 
     /**
@@ -137,10 +177,12 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $role = Role::find($id)->delete();
-        return response()->json(['role'=> $role], 200);
+        $role = Role::where('id', $request->id)->select('id', 'name')->get();
+        $role =$role->each->delete();
+
+        return response()->json(['message'=>'Records Deleted Successfully'], 200);
     }
     public function deleteAll(Request $request)
     {

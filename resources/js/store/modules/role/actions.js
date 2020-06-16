@@ -46,7 +46,9 @@ const actions = {
         context.commit('LOADING_STATUS', true, {
             root: true
         }) // start loading
-        axios.put('auth/roles/update', role)
+        axios.put(`auth/roles/${role.id}`,
+                role.id
+            )
             .then(response => {
                 context.commit('UPDATE_ROLE', response.data)
                 context.commit('DIALOG_STATUS', false, {
@@ -66,7 +68,7 @@ const actions = {
                 }) // show snackbar
             })
             .catch(error => {
-                context.commit('ROLE_ERROR', error.response.data) // get error from backend
+                context.commit('ROLE_ERROR', error.response) // get error from backend
                 context.commit('LOADING_STATUS', false, {
                     root: true
                 }) // stop loading
@@ -77,7 +79,11 @@ const actions = {
         context.commit('LOADING_STATUS', true, {
             root: true
         }) // start loading
-        axios.patch('auth/roles/delete/multiple', roleIds)
+        axios.delete(`
+                    auth / roles / $ {
+                        roleIds.id
+                    }
+                    `, roleIds)
             .then(response => {
                 context.commit('DELETE_ROLES', response.data)
                 context.commit('LOADING_STATUS', false, {
@@ -94,7 +100,7 @@ const actions = {
                 }) // show snackbar
             })
             .catch(error => {
-                console.log(error.response.data)
+                console.log(error.response)
             })
     }
 }

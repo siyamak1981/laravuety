@@ -43,11 +43,9 @@ const store = new Vuex.Store({
         },
         SNACKBAR_STATUS(state, payload) {
             state.loading = false; // set loading to false
-
             state.snackbar = payload[0].status
             state.snackbarText = payload[0].message
             state.snackbarTimeout = payload[0].timeout
-
             // change snackbar state afer timeout
             setTimeout(function () {
                 state.snackbar = false
