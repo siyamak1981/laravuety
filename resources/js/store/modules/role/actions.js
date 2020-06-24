@@ -6,10 +6,10 @@ const actions = {
         axios.get('auth/roles')
             .then(response => {
 
-                context.commit('SET_ROLE', response.data.roles)
-                context.commit('LOADING_STATUS', false, {
-                    root: true
-                })
+                context.commit('SET_ROLE', response.data),
+                    context.commit('LOADING_STATUS', false, {
+                        root: true
+                    })
             })
     },
     storeRole(context, data) {
@@ -18,7 +18,7 @@ const actions = {
         }) // start loading
         axios.post('auth/roles', data)
             .then(response => {
-                context.commit('STORE_ROLE', response.data.permission)
+                context.commit('STORE_ROLE', response.data)
                 context.commit('DIALOG_STATUS', false, {
                     root: true
                 }) // close dialog
@@ -36,7 +36,7 @@ const actions = {
                 }) // show snackbar
             })
             .catch(error => {
-                context.commit('ROLE_ERROR', error.response.data) // get error from backend
+
                 context.commit('LOADING_STATUS', false, {
                     root: true
                 }) // stop loading
@@ -47,7 +47,7 @@ const actions = {
             root: true
         }) // start loading
         axios.put(`auth/roles/${role.id}`,
-                role.id
+                role
             )
             .then(response => {
                 context.commit('UPDATE_ROLE', response.data)
@@ -68,22 +68,19 @@ const actions = {
                 }) // show snackbar
             })
             .catch(error => {
-                context.commit('ROLE_ERROR', error.response) // get error from backend
+
                 context.commit('LOADING_STATUS', false, {
                     root: true
                 }) // stop loading
             })
     },
-    deleteRoles(context, roleIds) {
-        console.log(roleIds)
+    deleteRoles(context, role) {
         context.commit('LOADING_STATUS', true, {
             root: true
         }) // start loading
-        axios.delete(`
-                    auth / roles / $ {
-                        roleIds.id
-                    }
-                    `, roleIds)
+        axios.delete(`auth/roles/${role.id}`, {
+                id: role.id
+            })
             .then(response => {
                 context.commit('DELETE_ROLES', response.data)
                 context.commit('LOADING_STATUS', false, {

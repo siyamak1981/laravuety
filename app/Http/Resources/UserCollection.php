@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 class UserCollection extends ResourceCollection
 {
     public $collects = 'App\Http\Resources\User';
+
     /**
      * Transform the resource collection into an array.
      *

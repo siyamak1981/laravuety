@@ -3,11 +3,13 @@ import Vuex from "vuex";
 import axios from 'axios'
 import permission from './modules/permission/index'
 import role from './modules/role/index'
+import user from './modules/user/index'
 Vue.use(Vuex);
 
 
 const store = new Vuex.Store({
     modules: {
+        user: user,
         role: role,
         perm: permission,
 

@@ -2,16 +2,14 @@ import actions from './actions'
 
 const state = {
     perms: [],
-    errors: [],
+
 }
 
 const getters = {
     getPerms(state) {
         return state.perms
     },
-    getPermErrors(state) {
-        return state.errors
-    },
+
 }
 
 const mutations = {
@@ -25,12 +23,14 @@ const mutations = {
 
 
     UPDATE_PERM(state, payload) {
+
         state.perms = state.perms.map(perm => {
             if (perm.id === payload.id) {
                 return Object.assign({}, perm, payload)
             }
             return perm
         })
+
     },
 
     DELETE_PERMS(state, payload) {
@@ -41,9 +41,7 @@ const mutations = {
 
     },
 
-    PERM_ERROR(state, errors) {
-        state.errors = errors
-    },
+
 }
 
 export default {

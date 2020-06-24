@@ -20,28 +20,10 @@ class User extends JsonResource
             'last'=>$this->last,
             'name' =>$this->name,
             'email' =>$this->email,
-            'role' =>$this->role['name'],
-            'permission' =>$this->permission['name'],
+            'role' =>$this->roles,
+            'permission' =>$this->permissions,
             'photo'=>\Storage::disk('images')->url($this->profile['photo']),
             'bio' =>$this->bio,
-            'created_at' =>$this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' =>$this->updated_at->format('Y-M-D H:i:s'),
-        ];
-    }
-}
-class Permission extends JsonResource
-{
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function toArray($request)
-    {
-        return [
-            'id'=>$this->id,
-            'name' =>$this->name,
             'created_at' =>$this->created_at->format('Y-m-d H:i:s'),
             'updated_at' =>$this->updated_at->format('Y-M-D H:i:s'),
         ];

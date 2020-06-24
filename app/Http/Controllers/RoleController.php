@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+
 use Validator;
 
 class RoleController extends Controller
@@ -25,13 +26,12 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->per_page;
-        $roles = Role::select('id', 'name')
+        $roles = Role::select('id', 'name', 'created_at', 'updated_at')
         ->with('permissions')
         ->get();
-
-        return response()->json(['roles' => Role::paginate($per_page)], 200);
+        return response()->json($roles, 200);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -177,16 +177,18 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request)
+    public function destroy($id)
     {
-        $role = Role::where('id', $request->id)->select('id', 'name')->get();
-        $role =$role->each->delete();
+        $role =Role::where('id', $id)->first();
 
+        dd($role);
+        $role->delete();
         return response()->json(['message'=>'Records Deleted Successfully'], 200);
     }
-    public function deleteAll(Request $request)
-    {
-        Role::whereIn('id', $request->roles)->delete();
-        return response()->json(['message'=>'Records Deleted Successfully'], 200);
-    }
+
+    // public function deleteAll(Request $request)
+    // {
+    //     Role::whereIn('id', $request->roles)->delete();
+    //     return response()->json(['message'=>'Records Deleted Successfully'], 200);
+    // }
 }

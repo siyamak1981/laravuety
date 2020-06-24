@@ -20,12 +20,13 @@ class PermissionController extends Controller
         $sortBy=$request->sort_by;
         $orderBy=$request->order_by;
 
-        // $permissions = Permission::all();
 
-        return response()->json([
-            'permissions' => Permission::paginate($per_page)
-            // 'permissions' => new UserCollection(Permission::orderBy($sortBy, $orderBy)->paginate($per_page)),
-        ], 200);
+        // return response()->json([
+
+        //     'permissions' => new UserCollection(Permission::paginate($per_page)),
+        // ], 200);
+        $permissions =Permission::paginate($per_page);
+        return response()->json($permissions, 200);
     }
 
     /**

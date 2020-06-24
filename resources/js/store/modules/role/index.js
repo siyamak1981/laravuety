@@ -2,25 +2,23 @@ import actions from './actions'
 
 const state = {
     roles: [],
-    errors: [],
     roleItem: [],
     permDialog: false,
+    pagination: {},
 }
 
 const getters = {
     getRoles(state) {
         return state.roles
     },
-    getRoleErrors(state) {
-        return state.errors
-    },
+
     getPermDialog(state) {
         return state.permDialog
     },
     getRoleItem(state) {
-        console.log(state)
         return state.roleItem
-    }
+    },
+
 }
 
 const mutations = {
@@ -48,9 +46,7 @@ const mutations = {
         }
     },
 
-    ROLE_ERROR(state, errors) {
-        state.errors = errors
-    },
+
 
     SET_ROLE_ITEM(state, payload) {
         state.permDialog = payload.dialog

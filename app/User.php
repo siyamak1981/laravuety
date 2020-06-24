@@ -45,16 +45,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'roles' => 'array',
     ];
-    public function role()
-    {
-        return $this->belongsTo('App\Role');
-    }
+
     public function profile()
     {
         return $this->hasOne(Profile::class)->withDefault();
     }
-    // public function isAdmin()
-    // {
-    //     return strtolower($this->role['name']) === 'admin';
-    // }
 }

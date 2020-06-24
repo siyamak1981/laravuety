@@ -92,7 +92,7 @@
                             :loading="loadingStatus"
                             loading-text="Loading... Please wait"
                             :headers="headers"
-                            :items="roles.data"
+                            :items="roles"
                             :server-items-length="roles.total"
                             @pagination="paginate"
                             :items-per-page="5"
@@ -163,7 +163,7 @@
                                 >
                                     mdi-pencil
                                 </v-icon>
-                                <v-icon small @click="deleteRoles(item)">
+                                <v-icon small @click="deleteRoles(role)">
                                     mdi-delete
                                 </v-icon>
                             </template>
@@ -305,8 +305,7 @@ export default {
     computed: {
         ...mapGetters({
             roles: "role/getRoles",
-            perms: "perm/getPerms",
-            roleErrors: "role/getRoleErrors"
+            perms: "perm/getPerms"
         }),
 
         dialog() {
@@ -351,11 +350,11 @@ export default {
         },
         paginate(event) {
             axios
-                .get(`/auth/permissions?page=${event.page}`, {
+                .get(`/auth/roles?page=${event.page}`, {
                     params: { per_page: event.itemsPerPage }
                 })
                 .then(response => {
-                    this.permissions = response.data.permissions;
+                    return response.data;
                 })
                 .catch(error => {
                     if (error.response.status == 401) {
@@ -375,24 +374,28 @@ export default {
             this.$store.dispatch("triggerDialog", true);
         },
 
-        editRole(role) {
-            this.editedIndex = this.roles.data.indexOf(role); // get index: important
-            this.editedRole = Object.assign({}, role);
+        editRole(roleIds) {
+            this.editedIndex = this.roles.indexOf(roleIds); // get index: important
+            this.editedRole = Object.assign({}, roleIds);
             this.$store.dispatch("triggerDialog", true);
         },
 
-        deleteRoles() {
-            const roles = this.$data.selected;
-            const roleIds = roles.map(role => {
-                return role.id;
-            });
-            const roleNames = roles.map(role => {
-                return role.name;
-            });
+        deleteRoles(role) {
+            // const roles = this.$data.selected;
+            // const roleIds = roles.map(role => {
+            //     return role.id;
+            // });
+            // const roleNames = roles.map(role => {
+            //     return role.name;
+            // });
+            // let decided = confirm("Are you sure to delete permission ?");
+            // if (decided) {
+            //     this.$store.dispatch("role/deleteRoles", roleIds);
+            // }   const index = this.perms.data.indexOf(permIds);
 
-            let decided = confirm("Are you sure to delete permission ?");
+            let decided = confirm("Are you sure you want to delete this item?");
             if (decided) {
-                this.$store.dispatch("role/deleteRoles", roleIds);
+                this.$store.dispatch("role/deleteRoles", role);
             }
         },
 

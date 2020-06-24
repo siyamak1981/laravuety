@@ -4,7 +4,7 @@ const actions = {
             root: true
         }); // start loading
         axios.get("auth/permissions").then(response => {
-            context.commit("SET_PERM", response.data.permissions);
+            context.commit("SET_PERM", response.data);
             context.commit("LOADING_STATUS", false, {
                 root: true
             });
@@ -35,7 +35,7 @@ const actions = {
                 }); // show snackbar
             })
             .catch(error => {
-                context.commit("PERM_ERROR", error.response); // get error from backend
+
                 context.commit("LOADING_STATUS", false, {
                     root: true
                 }); // stop loading
@@ -46,7 +46,9 @@ const actions = {
             root: true
         }); // start loading
         axios
-            .put(`auth/permissions/${perm.id}`, perm)
+            .put(`auth/permissions/${perm.id}`,
+                perm
+            )
             .then(response => {
                 context.commit("UPDATE_PERM", response.data);
                 context.commit("DIALOG_STATUS", false, {
@@ -67,7 +69,7 @@ const actions = {
 
             })
             .catch(error => {
-                context.commit("PERM_ERROR", error.response); // get error from backend
+
                 context.commit("LOADING_STATUS", false, {
                     root: true
                 }); // stop loading

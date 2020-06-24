@@ -16,7 +16,7 @@
         @input="selectAll"
         :footer-props="{
             itemsPerPageOptions: [5, 10, 15],
-            itemsPerPageText: 'Permission Per Page',
+            itemsPerPageText: 'Pems Per Page',
             'show-current-page': true,
             'show-first-last-page': true
         }"
@@ -73,8 +73,8 @@
                             <v-btn
                                 color="blue darken-1"
                                 text
-                                :loading="loadingStatus"
                                 @click="save"
+                                :loading="loadingStatus"
                                 >Save</v-btn
                             >
                         </v-card-actions>
@@ -207,8 +207,7 @@ export default {
 
     computed: {
         ...mapGetters({
-            perms: "perm/getPerms",
-            permErrors: "perm/getPermErrors"
+            perms: "perm/getPerms"
         }),
 
         dialog() {
@@ -275,20 +274,20 @@ export default {
         },
 
         paginate(event) {
-            const sortBy =
-                this.options.sortBy.length == 0
-                    ? "name"
-                    : this.options.sortBy[0];
-            const orderBy =
-                this.options.sortDesc.length > 0 && this.options.sortDesc[0]
-                    ? "asc"
-                    : "desc";
+            // const sortBy =
+            //     this.options.sortBy.length == 0
+            //         ? "name"
+            //         : this.options.sortBy[0];
+            // const orderBy =
+            //     this.options.sortDesc.length > 0 && this.options.sortDesc[0]
+            //         ? "asc"
+            //         : "desc";
             axios
                 .get(`/auth/permissions?page=${event.page}`, {
                     params: {
-                        per_page: event.itemsPerPage,
-                        sort_by: sortBy,
-                        order_by: orderBy
+                        per_page: event.itemsPerPage
+                        // sort_by: sortBy,
+                        // order_by: orderBy
                     }
                 })
                 .then(response => {
